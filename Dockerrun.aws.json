@@ -1,0 +1,23 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Authentication": {
+    "Bucket": "staffjoy-deploy",
+    "Key": "docker.cfg"
+  },
+  "Image": {
+    "Name": "staffjoy/scheduler:TAG",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "80"
+    }
+  ],
+  "Volumes": [
+    {
+        "HostDirectory": "/var/app/mydb",
+        "ContainerDirectory": "/etc/mysql"
+    }
+  ],
+  "Logging": "/var/log/nginx"
+}
