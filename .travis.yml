@@ -14,4 +14,4 @@ env:
 install:
     - bash dependencies.sh
 script:
-    - make test
+    - make test-unit
