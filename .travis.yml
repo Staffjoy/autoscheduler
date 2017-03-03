@@ -7,7 +7,7 @@ julia:
     - 0.3
 cache:
   directories:
-    - "$HOME/.julia/"
+    - $HOME/.julia/
 env:
   global:
     JULIA_LOAD_PATH: "$TRAVIS_BUILD_DIR"
