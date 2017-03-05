@@ -1,0 +1,17 @@
+dist: trusty
+sudo: false
+language: julia
+os:
+    - linux
+julia:
+    - 0.3
+cache:
+  directories:
+    - $HOME/.julia/
+env:
+  global:
+    JULIA_LOAD_PATH: "$TRAVIS_BUILD_DIR"
+install:
+    - bash dependencies.sh
+script:
+    - make test-unit
