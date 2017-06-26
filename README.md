@@ -1,6 +1,6 @@
 # Staffjoy Autoscheduler
 
-[![Build Status](https://travis-ci.org/Staffjoy/autoscheduler.svg?branch=master)](https://travis-ci.org/Staffjoy/autoscheduler) [![Moonlight](https://img.shields.io/badge/contractors-1-brightgreen.svg)](https://moonlightwork.com/staffjoy) 
+[![Build Status](https://travis-ci.org/Staffjoy/autoscheduler.svg?branch=master)](https://travis-ci.org/Staffjoy/autoscheduler) [![Moonlight contractors](https://img.shields.io/badge/contractors-1147-brightgreen.svg)](https://moonlightwork.com/for/staffjoy) 
 
 [Staffjoy is shutting down](https://blog.staffjoy.com/staffjoy-is-shutting-down-39f7b5d66ef6#.ldsdqb1kp), so we are open-sourcing our code. This repo was the original scheduling algorithm. The repo predates Staffjoy as a company by about a year, and it underwent constant rewrites and improvements. Along the way, we mixed integer programming libraries with techniques like dynamic programming. We used the [Julia Programming Language](http://julialang.org/), and Staffjoy is eternally grateful to the [Julia JuMP project](https://github.com/JuliaOpt/JuMP.jl) for making such a great library that it rekindled an interested in scheduling optimization algorithms that became Staffjoy.
 
