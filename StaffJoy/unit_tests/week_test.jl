@@ -10,18 +10,18 @@ function test_shift_count_validation()
     # Shift counts have to be reasonable
 
     # Setup
-    env = {
+    env = Dict(
         "coverage"  => Array[
             [1*ones(Int, 8)],
             [1*ones(Int, 8)],
             [zeros(Int, 8)],
         ],
         "time_between_coverage" => 12,
-    }
+    )
 
     # Shift count infeasible
-    employees = {
-        "a" => {
+    employees = Dict(
+        "a" => Dict(
             "hours_min" => 14,
             "hours_max" => 18,
             "shift_count_min" => 2,
@@ -32,8 +32,8 @@ function test_shift_count_validation()
                 [zeros(Int,8)],
             ],
             "longest_availability" => 8*ones(Int, 8),
-        },
-    }
+        ),
+    )
 
     # (don't overwrite our good variables)
     ok, message, _ = build_week(employees, env)

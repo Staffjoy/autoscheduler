@@ -30,7 +30,7 @@ function meet_base_coverage(env, employees)
     return employees
 end
 
-# Generate lots of unassigned shifts - more than we need - 
+# Generate lots of unassigned shifts - more than we need -
 # so it is fast
 function meet_unassigned_base_coverage(env, day)
     sum_coverage = sum(env["coverage"][day])
@@ -77,7 +77,7 @@ function generate_unassigned_shift(env)
     end
 
     # return tuple so you can do employees[name] = values
-    return name, {
+    return name, Dict(
         "hours_min" => shift_time_min,
         "shift_time_min" => shift_time_min,
         "hours_max" => shift_time_max,
@@ -85,7 +85,7 @@ function generate_unassigned_shift(env)
         "shift_count_max" => shift_count,
         "shift_count_min" => shift_count,
         "availability" => availability,
-    }
+    )
 end
 
 function is_unassigned_shift(name)

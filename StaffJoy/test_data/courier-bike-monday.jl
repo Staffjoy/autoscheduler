@@ -1,55 +1,55 @@
-bike_monday_env = {
+bike_monday_env = Dict(
     "coverage"  => [3, 4, 5 * ones(Int, 6), 4 * ones(Int, 2), 2 * ones(Int, 2)],
     "cycle_length" => 12,
-}
+)
 
 # Coverage requires 49 man hours
 
-bike_monday_employees = {
-    "Cody" => {
+bike_monday_employees = Dict(
+    "Cody" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => ones(Int, 12),
-    },
-    "Damian" => {
+    ),
+    "Damian" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => ones(Int, 12),
-    },
-    "Douglas" => {
+    ),
+    "Douglas" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => ones(Int, 12),
-    },
-    "Desmond" => {
+    ),
+    "Desmond" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => ones(Int, 12),
-    },
-    "Dylan" => {
+    ),
+    "Dylan" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => [
             ones(Int, 7), zeros(Int, 5),
         ],
-    },
-    "Jaeger" => {
+    ),
+    "Jaeger" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => ones(Int, 12),
-    },
-    "Leonardo" => {
+    ),
+    "Leonardo" => Dict(
         "min" => 3,
         "max" => 8,
         "availability" => [
             ones(Int, 7), zeros(Int, 5),
         ],
-    },
-    "Shaun" => {
+    ),
+    "Shaun" => Dict(
         "min" => 3, # hours worked over simulation
         "max" => 8, # hours worked over simulation
         "availability" => [
             ones(Int, 12),
         ],
-    },
-}
+    ),
+)

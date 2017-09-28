@@ -20,7 +20,7 @@ function test_longest_consecutive()
         (ones(Int, 10), 10),
         ([1 1 1 0 1 1 1 0 0 1 1], 3),
         ([1 1 0 1 1 1 0 0 1 1], 3),
-        ([ones(Int, 12)], 12)
+        (ones(Int, 12), 12)
     ]
 
     for case in test_cases
@@ -138,7 +138,7 @@ end
 
 function test_get_longest_availability()
     day = 1
-    employee = {
+    employee = Dict(
         "availability" => Array[
             [0, 1, 1, 1, 1, 0], # Don't trigger bounds
             [0, 1, 1, 0, 0, 0], # trigger min
@@ -146,7 +146,7 @@ function test_get_longest_availability()
         ],
         "shift_time_min" => 3,
         "shift_time_max" => 5,
-    }
+    )
 
     @test get_longest_availability(employee, 1) == 4
     @test get_longest_availability(employee, 2) == 0
@@ -158,13 +158,13 @@ function test_sub_array()
     array = [1, 2, 3, 4, 5]
 
     @test sub_array(array, 1, 5) == [1, 2, 3, 4, 5]
-    @test sub_array(array, 2, 1) == [2, 3, 4, 5, 1]
-    @test sub_array(array, 3, 2) == [3, 4, 5, 1, 2]
+    @test sub_array(array, 2, 1) == [[2, 3, 4, 5], [1]]
+    @test sub_array(array, 3, 2) == [[3, 4, 5], [1, 2]]
     @test sub_array(array, 1, 1) == [1]
 end
 
 function test_days_available_per_week()
-    lenny = {
+    lenny = Dict(
         "shift_time_min" => 4,
         "shift_time_max" => 6,
         "hours_min" => 16, # hours worked over simulation
@@ -180,22 +180,22 @@ function test_days_available_per_week()
             [zeros(Int, 12)],
             [zeros(Int, 12)],
         ],
-    }
+    )
 
     @test days_available_per_week(lenny) == 3
 end
 
 function test_day_sum_coverage()
-    test_env = {
+    test_env = Dict(
         "coverage"  => [3, 4, 5 * ones(Int, 6), 4 * ones(Int, 2), 2 * ones(Int, 2)],
         "cycle_length" => 12,
-    }
+    )
     expected = 49
     @test day_sum_coverage(test_env) == expected
 end
 
 function test_week_sum_coverage()
-    test_env = {
+    test_env = Dict(
         "shift_time_min" => 3,
         "shift_time_max" => 8,
         "coverage"  => Array[
@@ -216,53 +216,53 @@ function test_week_sum_coverage()
         ],
         "time_between_coverage" => 12,
         "intershift" => 13, # Time periods between shifts   # only serve 1 shift/day
-    }
+    )
 
     expected = 49*5 + 23*2
     @test week_sum_coverage(test_env) == expected
 end
 function test_day_hours_scheduled()
-    schedule = {
-        "bob" => {
+    schedule = Dict(
+        "bob" => Dict(
             "start" => 8,
             "length" => 13,
-        },
-        "joe" => {
+        ),
+        "joe" => Dict(
             "start" => 1,
             "length" => 30,
-        }
-    }
+        )
+    )
 
     expected = 43
     @test day_hours_scheduled(schedule) == expected
 end
 function test_week_hours_scheduled()
-    schedule = {
+    schedule = Dict(
         "bob" => [
-            {
+            Dict(
                 "start" => 8,
                 "length" => 13,
                 "day" => 2,
-            },
-            {
+            ),
+            Dict(
                 "start" => 0,
                 "length" => 3,
                 "day" => 2,
-            },
+            ),
         ],
         "billy" => [
-            {
+            Dict(
                 "start" => 8,
                 "length" => 19,
                 "day" => 2,
-            },
-            {
+            ),
+            Dict(
                 "start" => 0,
                 "length" => 3,
                 "day" => 2,
-            },
+            ),
         ],
-    }
+    )
 
     expected = 38
     @test week_hours_scheduled(schedule) == expected

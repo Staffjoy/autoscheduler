@@ -2,19 +2,19 @@ function schedule_day(employees, env)
     ok, message = validate_day(employees, env)
     if !ok
         Logging.info( message)
-        return false, {}
+        return false, Any[]
     end
 
     ok, schedule = calculate_day(employees, env)
     if !ok
-        return false, {}
+        return false, Any[]
     end
 
     # again a boolean "ok" followed by message
     ok, message = validate_day_schedule(employees, env, schedule)
     if !ok
         Logging.info( message)
-        return false, {}
+        return false, Any[]
     end
 
     # boolean "ok" followed by data
@@ -60,12 +60,12 @@ function calculate_day(employees, env)
     end
 
     # Shift start time
-    @defVar(m, 1 <= shift_start[1:num_employees] <= total_time, Int)
+        @variable(m, 1 <= shift_start[1:num_employees] <= total_time, Int)
     for e in 1:num_employees # e is an int
         setUpper(shift_start[e], shift_start_max[e])
     end
     # Shift length - max & min
-    @defVar(m, shift_length[e=1:num_employees], Int)
+    @variable(m, shift_length[e=1:num_employees], Int)
     for e in 1:num_employees # e is an int
         setLower(shift_length[e], length_min[e])
         setUpper(shift_length[e], length_max[e])
@@ -73,7 +73,7 @@ function calculate_day(employees, env)
         # The "delivery" constraint:
         # prevent unassigned shifts from starting after a certain time
         if "no_shifts_after" in keys(env)
-            @addConstraint(m,
+            @constraint(m,
                 shift_start[e] <= env["no_shifts_after"],
             )
         end
@@ -115,23 +115,23 @@ function calculate_day(employees, env)
     # active at time t
 
     # define variables
-    @defVar(m, started[1:bin_total], Bin)
-    @defVar(m, active[1:bin_total], Bin)
+    @variable(m, started[1:bin_total], Bin)
+    @variable(m, active[1:bin_total], Bin)
 
     # Need to split this into its constituent parts
     # (allows us to determine whether it is equal to zero, meaning
     # that the shift started)
-    @defVar(m, 0 <= start_min_now_pos[1:bin_total] <= total_time, Int)
-    @defVar(m, 0 <= start_min_now_neg[1:bin_total] <= total_time, Int)
+    @variable(m, 0 <= start_min_now_pos[1:bin_total] <= total_time, Int)
+    @variable(m, 0 <= start_min_now_neg[1:bin_total] <= total_time, Int)
     # Is it positive?
-    @defVar(m, start_min_now_helper[1:bin_total], Bin)
+    @variable(m, start_min_now_helper[1:bin_total], Bin)
 
     # Constraints
     for i in 1:bin_total
         # instead of SOS constraint on the start_min variables:
         # Use a big M approach
         M = total_time + 1
-        @addConstraints m begin
+        @constraints m begin
             start_min_now_pos[i] <= M * start_min_now_helper[i]
             start_min_now_neg[i] <= M * (1 - start_min_now_helper[i])
             start_min_now_pos[i] - start_min_now_neg[i] == shift_start[i_to_e[i]] - i_to_t[i]
@@ -140,11 +140,11 @@ function calculate_day(employees, env)
 
         # Create one contiguous chunk of ones
         if i_to_t[i] == 1
-            @addConstraint(m,
+            @constraint(m,
                 started[i] == active[i],
             )
         else # not first time
-            @addConstraint(m,
+            @constraint(m,
                 # basically "t-1" for same shift
                 started[i] >= active[i] - active[i-num_employees],
             )
@@ -152,11 +152,11 @@ function calculate_day(employees, env)
     end
 
     for e in 1:num_employees
-        @addConstraints m begin
+        @constraints m begin
             # each shift can only have one start time
-            1 == sum{started[i], i=e:num_employees:bin_total}
+            1 == sum(started[i], i=e:num_employees:bin_total)
             # Shift binary array must sum to length variable
-            shift_length[e] == sum{active[i], i=e:num_employees:bin_total}
+            shift_length[e] == sum(active[i] for i=e:num_employees:bin_total)
         end
     end
 
@@ -167,7 +167,7 @@ function calculate_day(employees, env)
     for i in 1:bin_total
         # Employees dont' work when they are unavailable
         if employees[i_employee[i]]["availability"][i_to_t[i]] == 0
-            @addConstraint(m, active[i] == 0)
+            @constraint(m, active[i] == 0)
         end
     end
 
@@ -180,13 +180,13 @@ function calculate_day(employees, env)
     for t in 1:total_time
         # No coverage == nobody working
         if env["coverage"][t] > 0
-            @addConstraint(m,
-                env["coverage"][t] <= sum{active[i], i=1:bin_total; i_to_t[i] == t}
+            @constraint(m,
+                env["coverage"][t] <= sum(active[i] for i=1:bin_total if i_to_t[i] == t)
             )
         else
             # nobody needed, so nobody should be working
-            @addConstraint(m,
-                0 == sum{active[i], i=1:bin_total; i_to_t[i] == t}
+            @constraint(m,
+                0 == sum(active[i] for i=1:bin_total if i_to_t[i] == t)
             )
         end
     end
@@ -196,7 +196,7 @@ function calculate_day(employees, env)
     ###########################################################################
 
     # Set the objective
-    @setObjective(m, Min, sum{shift_length[e], e=1:num_employees})
+        @objective(m, Min, sum(shift_length[e] for e=1:num_employees))
 
 
     # optimize
@@ -209,22 +209,22 @@ function calculate_day(employees, env)
         schedule = Dict()
         for e in keys(employees)
             e_index += 1
-            # NOTE - we round here. If we're debugging - don't round. Might get weird floats. 
+            # NOTE - we round here. If we're debugging - don't round. Might get weird floats.
             start = convert(Int, round(getValue(shift_start[e_index])))
             length = convert(Int, round(getValue(shift_length[e_index])))
             sumHours += length
-            schedule[e] = {
+            schedule[e] = Dict(
                 "start" => start,
                 "length" => length,
-            }
+            )
         end
         # TODO - build return function
     else
         Logging.debug( "No optimal solution found")
         gc()
-        return false, {}
+        return false, Any[]
     end
-    # ok 
+    # ok
     gc()
     return true, schedule
 end
@@ -275,7 +275,7 @@ function validate_day(employees, env)
 end
 
 function validate_day_schedule(employees, env, schedule)
-    total_time = length(env["coverage"]) 
+    total_time = length(env["coverage"])
 
     # helper variable for later
     coverage_check = zeros(Int, total_time)

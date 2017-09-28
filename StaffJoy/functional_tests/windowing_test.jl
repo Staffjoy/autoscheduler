@@ -4,7 +4,7 @@ end
 
 function test_windowing_end_to_end()
     # Goal: Just run a schedule that needs a window and make sure it comes out as expected
-    env = {
+    env = Dict(
         "shift_time_min" => 3,
         "shift_time_max" => 8,
         "coverage"  => Array[
@@ -13,10 +13,10 @@ function test_windowing_end_to_end()
         ],
         "time_between_coverage" => 12,
         "intershift" => 12, # Time periods between shifts   # only serve 1 shift/day
-    }
+    )
 
-    employees = {
-        "Lenny" => {
+    employees = Dict(
+        "Lenny" => Dict(
             "hours_min" => 6, # hours worked over simulation
             "hours_max" => 16, # hours worked over simulation
             "shift_time_min" => 3,
@@ -27,12 +27,13 @@ function test_windowing_end_to_end()
                 [ones(Int, 8)],
                 [ones(Int, 8)],
             ],
-        },
-    }
+        ),
+    )
+
     ok, s = schedule(employees, env)
     @test ok
 
     # Check that the offsets weren't goofy :-)
-    expected = {"Lenny"=>{{"length"=>5,"day"=>1,"start"=>3},{"length"=>5,"day"=>2,"start"=>4}}}
+    expected = Dict("Lenny"=>Dict(Dict("length"=>5,"day"=>1,"start"=>3),Dict("length"=>5,"day"=>2,"start"=>4)))
     @test expected == s
 end

@@ -12,24 +12,24 @@ function schedule_by_day(config)
         ok, weekly_schedule = schedule_by_day_greedy(employees, env, start_day)
     else
         warn("Unknown method $method")
-        return {"success" => false}
+        return Dict("success" => false)
     end
     if ok
         valid_schedule, message = validate_schedule(employees, env, weekly_schedule)
         if !valid_schedule
             Logging.info( "Unexpected validation issue in $method scheduler - $message")
-            return {"success" => false}
+            return Dict("success" => false)
         end
         hours_scheduled = week_hours_scheduled(weekly_schedule)
         overage = (hours_scheduled - perfect_optimality) / perfect_optimality
         Logging.info( "$method day scheduler succeeded - overage $overage ")
 
-        return {
+        return Dict(
             "success" => true,
             "schedule" => weekly_schedule,
-        }
+        )
     end
-    return {"success" => false}
+    return Dict("success" => false)
 end
 
 
@@ -76,15 +76,15 @@ function schedule_by_day_balanced(employees, env, start_day=1)
 
         ok, day_schedule = schedule_day(day_employees, day_env)
         if !ok
-            return false, {}
+            return false, Any[]
         end
 
         for e in keys(day_schedule)
-            push!(weekly_schedule[e], {
+            push!(weekly_schedule[e], Dict(
                 "day" => day,
                 "start" => day_schedule[e]["start"],
                 "length" => day_schedule[e]["length"],
-            })
+            ))
             hours_scheduled[e] += day_schedule[e]["length"]
         end
 
@@ -136,7 +136,7 @@ function schedule_by_day_balanced(employees, env, start_day=1)
 end
 
 #=
-This scheduler does not account for future availability of employees. 
+This scheduler does not account for future availability of employees.
 Instead, when it reaches an infeasibility it tries to *drop* employee
 shifts. This may behoove our algorithm because it tends to assign people
 to the upper bound of their shift limits.
@@ -193,7 +193,7 @@ function schedule_by_day_greedy(employees, env, start_day=1)
                         continue # will this work?
                     else
                         # We're fucked
-                        return false, {}
+                        return false, Any[]
                     end
                 end
             end
@@ -206,15 +206,15 @@ function schedule_by_day_greedy(employees, env, start_day=1)
 
         ok, day_schedule = schedule_day(day_employees, day_env)
         if !ok
-            return false, {}
+            return false, Any[]
         end
 
         for e in keys(day_schedule)
-            push!(weekly_schedule[e], {
+            push!(weekly_schedule[e], Dict(
                 "day" => day,
                 "start" => day_schedule[e]["start"],
                 "length" => day_schedule[e]["length"],
-            })
+            ))
             hours_scheduled[e] += day_schedule[e]["length"]
         end
 

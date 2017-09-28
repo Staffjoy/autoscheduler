@@ -10,11 +10,11 @@ end
 function test_is_unassigned_shift_success()
     # Run it a few times - it generates randomly
     for i in 1:20
-        name, employee = generate_unassigned_shift({
+        name, employee = generate_unassigned_shift(Dict(
             "shift_time_min" => 4,
             "shift_time_max" => 8,
             "coverage" => Array[[2,3,4,],[1,2,3],[1,0,0]],
-        })
+        ))
 
         @test is_unassigned_shift(name)
     end
@@ -45,8 +45,8 @@ function test_meet_base_coverage_sufficient()
 end
 
 function test_meet_base_coverage_generate()
-    employees = {
-        "Lenny" => {
+    employees = Dict(
+        "Lenny" => Dict(
             "hours_min" => 18,
             "hours_max" => 32,
             "shift_count_max" => 5,
@@ -59,8 +59,8 @@ function test_meet_base_coverage_generate()
                 [zeros(Int, 4), ones(Int, 8)],
                 [ones(Int, 12)],
             ],
-        },
-    }
+        ),
+    )
     new_employees = meet_base_coverage(test_bike_week_1_env, employees)
     @test length(new_employees) > length(employees)
     for e in keys(new_employees)
@@ -81,7 +81,7 @@ function test_meet_base_coverage_empty_employees()
 end
 
 function test_meet_unassigned_base_coverage()
-    env = {
+    env = Dict(
         "coverage" => Array[
             [1, 1, 1, 1, 1],
             [2, 2, 2, 2, 2],
@@ -89,7 +89,7 @@ function test_meet_unassigned_base_coverage()
         ],
         "shift_time_min" => 1,
         "shift_time_max" => 3,
-    }
+    )
     day = 2
     expected_max = 10
     expected_min = 4

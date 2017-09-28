@@ -1,4 +1,4 @@
-test_courier_car_1_env = {
+test_courier_car_1_env = Dict(
     "shift_time_min" => 3,
     "shift_time_max" => 8,
     "coverage"  => Array[ # 8AM->8PM
@@ -19,10 +19,10 @@ test_courier_car_1_env = {
     ],
     "time_between_coverage" => 12,
     "intershift" => 13, # Time periods between shifts
-}
+)
 
-test_courier_car_1_employees = {
-	"Aaron" => {
+test_courier_car_1_employees = Dict(
+	"Aaron" => Dict(
 		"hours_min" => 18,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -35,8 +35,8 @@ test_courier_car_1_employees = {
             [zeros(Int, 4), ones(Int, 8)],
             [ones(Int, 12)],
         ],
-	},
-	"Austin" => {
+	),
+	"Austin" => Dict(
 		"hours_min" => 12,
 		"hours_max" => 28,
 	    "shift_count_max" => 5,
@@ -49,8 +49,8 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [zeros(Int, 6), ones(Int, 6)],
         ],
-	}, 
-	"Elliott" => {
+	),
+	"Elliott" => Dict(
 		"hours_min" => 18,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -63,8 +63,8 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-	},
-	"Greg" => {
+	),
+	"Greg" => Dict(
 		"hours_min" => 18,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -77,8 +77,8 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-	},
-	"Kimberly" => {
+	),
+	"Kimberly" => Dict(
 		"hours_min" => 24,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -91,8 +91,8 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-	},
-	"Lewis" => {
+	),
+	"Lewis" => Dict(
 		"hours_min" => 24,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -105,8 +105,8 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-	},
-	"Matthew" => {
+	),
+	"Matthew" => Dict(
 		"hours_min" => 18,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -119,8 +119,8 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-	},
-	"MerryJo" => {
+	),
+	"MerryJo" => Dict(
 		"hours_min" => 6,
 		"hours_max" => 18,
 	    "shift_count_max" => 3,
@@ -134,8 +134,8 @@ test_courier_car_1_employees = {
             [zeros(Int, 12)],
         ],
 
-	},
-	"Penelope" => {
+	),
+	"Penelope" => Dict(
 		"hours_min" => 12,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -148,8 +148,8 @@ test_courier_car_1_employees = {
             [zeros(Int, 12)],
             [zeros(Int, 12)],
         ],
-	},
-	"Robert" => {
+	),
+	"Robert" => Dict(
 		"hours_min" => 18,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -162,10 +162,8 @@ test_courier_car_1_employees = {
             [ones(Int, 8), zeros(Int, 4)],
             [zeros(Int, 12)],
         ],
-
-
-	},
-	"Scott" => {
+	),
+	"Scott" => Dict(
 		"hours_min" => 12,
 		"hours_max" => 32,
 	    "shift_count_max" => 5,
@@ -178,5 +176,5 @@ test_courier_car_1_employees = {
             [ones(Int, 12)],
             [zeros(Int, 12)],
         ],
-	},
-}
+	),
+)

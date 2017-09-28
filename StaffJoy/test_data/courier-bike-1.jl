@@ -1,4 +1,4 @@
-test_bike_week_1_env = {
+test_bike_week_1_env = Dict(
     "shift_time_min" => 3,
     "shift_time_max" => 8,
     "coverage"  => Array[
@@ -19,12 +19,12 @@ test_bike_week_1_env = {
     ],
     "time_between_coverage" => 12,
     "intershift" => 13, # Time periods between shifts   # only serve 1 shift/day
-}
+)
 
 # Coverage requires 291 man hours
 
-test_bike_week_1_employees = {
-    "Cody" => {
+test_bike_week_1_employees = Dict(
+    "Cody" => Dict(
         "hours_min" => 18, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_time_min" => 4,
@@ -39,8 +39,8 @@ test_bike_week_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-    },
-    "Damian" => {
+    ),
+    "Damian" => Dict(
         "hours_min" => 12, # hours worked over simulation
         "hours_max" => 28, # hours worked over simulation
         "intershift" => 4,
@@ -55,8 +55,8 @@ test_bike_week_1_employees = {
             [zeros(Int, 12)],
             [zeros(Int, 12)],
         ],
-    },
-    "David" => {
+    ),
+    "David" => Dict(
         "hours_min" => 12, # hours worked over simulation
         "hours_max" => 18, # hours worked over simulation
         "shift_count_min" => 2,
@@ -70,8 +70,8 @@ test_bike_week_1_employees = {
             [zeros(Int, 12)],
             [zeros(Int, 12)],
         ],
-    },
-    "Douglas" => {
+    ),
+    "Douglas" => Dict(
         "hours_min" => 12, # hours worked over simulation
         "hours_max" => 28, # hours worked over simulation
         "shift_count_min" => 2,
@@ -85,8 +85,8 @@ test_bike_week_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-    },
-    "Dylan" => {
+    ),
+    "Dylan" => Dict(
         # deliberately no shift count
         "hours_min" => 28, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
@@ -102,8 +102,8 @@ test_bike_week_1_employees = {
             [ones(Int, 7), zeros(Int, 5)],
             [ones(Int, 7), zeros(Int, 5)],
         ],
-    },
-    "Jaeger" => {
+    ),
+    "Jaeger" => Dict(
         "hours_min" => 18, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_count_min" => 3,
@@ -117,8 +117,8 @@ test_bike_week_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-    },
-    "Julian" => {
+    ),
+    "Julian" => Dict(
         "hours_min" => 28, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_count_min" => 4,
@@ -132,8 +132,8 @@ test_bike_week_1_employees = {
             [ones(Int, 12)],
             [zeros(Int, 4), ones(Int, 8)],
         ],
-    },
-    "Leonardo" => {
+    ),
+    "Leonardo" => Dict(
         "hours_min" => 18, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_count_min" => 3,
@@ -147,8 +147,8 @@ test_bike_week_1_employees = {
             [ones(Int, 7), zeros(Int, 5)],
             [ones(Int, 7), zeros(Int, 5)],
         ],
-    },
-    "Patrick" => {
+    ),
+    "Patrick" => Dict(
         "hours_min" => 12, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_count_min" => 2,
@@ -162,8 +162,8 @@ test_bike_week_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-    },
-    "R" => {
+    ),
+    "R" => Dict(
         "hours_min" => 12, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_count_min" => 2,
@@ -177,8 +177,8 @@ test_bike_week_1_employees = {
             [ones(Int, 12)],
             [ones(Int, 12)],
         ],
-    },
-    "Shaun" => {
+    ),
+    "Shaun" => Dict(
         "hours_min" => 18, # hours worked over simulation
         "hours_max" => 32, # hours worked over simulation
         "shift_count_min" => 3,
@@ -192,5 +192,5 @@ test_bike_week_1_employees = {
             [zeros(Int, 2), ones(Int, 10)],
             [zeros(Int, 2), ones(Int, 10)],
         ],
-    },
-}
+    ),
+)

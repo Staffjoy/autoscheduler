@@ -1,4 +1,4 @@
-function schedule(employees, env)
+    function schedule(employees, env)
     # Wrap the scheduling in windowing!
     start_index, end_index, time_delta = get_window(env["coverage"])
 
@@ -20,7 +20,7 @@ function schedule(employees, env)
     ok, shifts = run_schedule(employees, env)
     if !ok
         Logging.info( "Scheduling not ok at windower")
-        return ok, {}
+        return ok, Any[]
     end
 
     # Exit the window and return
@@ -46,13 +46,13 @@ function run_schedule_standard(employees, env)
     ok, employees, env = build_week(employees, env)
     if !ok
         Logging.info( "Build failed")
-        return false, {}
+        return false, Any[]
     end
 
     ok, message = validate_input(employees, env)
     if !ok
         Logging.info( message)
-        return false, {}
+        return false, Any[]
     end
 
     # Check days per week is large enough for consec
@@ -164,7 +164,7 @@ function schedule_week(employees, env, consecutive)
     valid_schedules = Any[]
     prior_lift = false
     lift_ceiling = false
-    weekly_schedule = Dict{Any,Any}
+    weekly_schedule = Dict(Any,Any)
     start_day = 0
     start_time = time()
     perfect_optimality = week_sum_coverage(env)
@@ -202,13 +202,13 @@ function schedule_week(employees, env, consecutive)
         end
 
         for start_day=1:size(env["coverage"], 1)
-            for method in methods 
-                push!(calculations, {
+            for method in methods
+                push!(calculations, Dict(
                     "start_day" => start_day,
                     "method" => method,
                     "employees" => employees,
                     "env" => env,
-                })
+                ))
             end
         end
 
@@ -226,7 +226,7 @@ function schedule_week(employees, env, consecutive)
     end
 
     if length(valid_schedules) == 0
-        return false, {}
+        return false, Any[]
     end
 
     best_hours = 0
@@ -242,7 +242,7 @@ function schedule_week(employees, env, consecutive)
     if best_schedule == None
         num = length(valid_schedules)
         Logging.info( "Found $num schedules")
-        return false, {}
+        return false, Any[]
     end
     elapsed = (time() - start_time) / 60
     num_schedules = length(valid_schedules)
@@ -257,12 +257,12 @@ function build_week(employees, env)
     # First check for some required shit in the environment
     if !("shift_time_min" in keys(env))
         # turn employees into a message variable
-        return false, "shift_time_min not in environment", {}
+        return false, "shift_time_min not in environment", Any[]
     end
 
     if !("shift_time_max" in keys(env))
         Logging.info( "shift_time_max not in environment")
-        return false, {}, {}
+        return false, Any[], Any[]
     end
 
 
@@ -273,7 +273,7 @@ function build_week(employees, env)
         # This has to be run now due to later function dependencies
         if (size(employees[e]["availability"], 1) != days_per_week)
             Logging.info( string("Employee ", e, " availability wrong number days per week"))
-            return false, {}, {}
+            return false, Any[], Any[]
         end
 
         # set employee to unavailable when coverage is 0
@@ -475,10 +475,10 @@ function assign_employees_to_days(employees, env, consecutive=false, lift_ceilin
 
 
     # Decision Variables
-    @defVar(m, decision_variable[1:decision_index_max], Bin)
+    @variable(m, decision_variable[1:decision_index_max], Bin)
 
     if consecutive
-        @defVar(m, decision_consecutive[1:decision_index_max], Bin)
+        @variable(m, decision_consecutive[1:decision_index_max], Bin)
     end
 
     #=
@@ -487,7 +487,7 @@ function assign_employees_to_days(employees, env, consecutive=false, lift_ceilin
     maximizes likelihood of feasibility.
     Ignoring lift may mean that one day gets all the excess capacity. This sucks.
     =#
-    @defVar(m, lift >= 1)
+    @variable(m, lift >= 1)
 
     decision_index_to_employee = String[]
     decision_index_to_day = Int[]
@@ -505,23 +505,23 @@ function assign_employees_to_days(employees, env, consecutive=false, lift_ceilin
     for e in keys(employees)
         # days assigned = # shifts
         # Break into to sections due to Gurobi range issue in Julia
-        @addConstraint(m,
-            employees[e]["shift_count_min"] <= sum{decision_variable[i], i=1:decision_index_max; decision_index_to_employee[i] == e}
+        @constraint(m,
+            employees[e]["shift_count_min"] <= sum(decision_variable[i] for i=1:decision_index_max if decision_index_to_employee[i] == e)
         )
 
-        @addConstraint(m,
-            sum{decision_variable[i], i=1:decision_index_max; decision_index_to_employee[i] == e} <= employees[e]["shift_count_max"]
+        @constraint(m,
+            sum(decision_variable[i] for i=1:decision_index_max if decision_index_to_employee[i] == e) <= employees[e]["shift_count_max"]
         )
 
         # assigned days * longest availability > min week hours
-        @addConstraint(m,
-            sum{decision_index_hours[i] * decision_variable[i], i=1:decision_index_max; decision_index_to_employee[i] == e} >= employees[e]["hours_min"]
+        @constraint(m,
+            sum(decision_index_hours[i] * decision_variable[i] for i=1:decision_index_max if decision_index_to_employee[i] == e) >= employees[e]["hours_min"]
         )
 
         if consecutive
             if employees[e]["shift_count_max"] < (days_per_week - 1)
-                @addConstraint(m,
-                    sum{decision_consecutive[i], i=1:decision_index_max; decision_index_to_employee[i] == e } >= 1
+                @constraint(m,
+                    sum(decision_consecutive[i] for i=1:decision_index_max if decision_index_to_employee[i] == e) >= 1
                 )
             end
         end
@@ -530,23 +530,23 @@ function assign_employees_to_days(employees, env, consecutive=false, lift_ceilin
     for i in 1:decision_index_max
         # If an employee has no availability - don't schedule them!
         if decision_index_hours[i] == 0
-            @addConstraint(m, decision_variable[i] == 0)
+            @constraint(m, decision_variable[i] == 0)
         end
 
         if consecutive
             if decision_index_to_day[i] == 1
                 # See if employee worked day before this week
                 if ("worked_day_preceding_week" in keys(employees[decision_index_to_employee[i]])) && (employees[decision_index_to_employee[i]]["worked_day_preceding_week"] == false)
-                    @addConstraint(m, decision_consecutive[i] + decision_variable[i] == 1)
+                    @constraint(m, decision_consecutive[i] + decision_variable[i] == 1)
                 else
                     # throw away the first index - it defaults to zero
-                    @addConstraint(m, decision_consecutive[i] == 0)
+                    @constraint(m, decision_consecutive[i] == 0)
                 end
             else # day > 1
                 # Goal: decision_consecutive[i] = 1 IF AND ONLY IF
                 # decision_variable[i]=0 and decision_variable[i-1]=0
-                @addConstraint(m, (decision_variable[i] + decision_variable[i-1]) >= 1 - decision_consecutive[i])
-                @addConstraint(m, (2 - decision_variable[i] - decision_variable[i-1]) >= 2*decision_consecutive[i])
+                @constraint(m, (decision_variable[i] + decision_variable[i-1]) >= 1 - decision_consecutive[i])
+                @constraint(m, (2 - decision_variable[i] - decision_variable[i-1]) >= 2*decision_consecutive[i])
             end
 
         end
@@ -554,26 +554,26 @@ function assign_employees_to_days(employees, env, consecutive=false, lift_ceilin
 
     for d in 1:days_per_week
         # sum of day coverage is sufficient based on longest avail.
-        @addConstraint(m,
-            sum{decision_index_hours[i] * decision_variable[i], i=1:decision_index_max; decision_index_to_day[i] == d} >= sum(env["coverage"][d])*lift
+        @constraint(m,
+            sum(decision_index_hours[i] * decision_variable[i] for i=1:decision_index_max if decision_index_to_day[i] == d) >= sum(env["coverage"][d])*lift
         )
 
         # ensure hourly coverage
         for t in 1:day_length[d]
-            @addConstraint(m,
-                sum{employees[decision_index_to_employee[i]]["availability"][d][t] * decision_variable[i], i=1:decision_index_max; decision_index_to_day[i] == d} >= env["coverage"][d][t]
+            @constraint(m,
+                sum(employees[decision_index_to_employee[i]]["availability"][d][t] * decision_variable[i] for i=1:decision_index_max if decision_index_to_day[i] == d) >= env["coverage"][d][t]
             )
         end
     end
 
     # For looping if infeasible models
     if lift_ceiling != false
-        @addConstraint(m, lift <= lift_ceiling)
+        @constraint(m, lift <= lift_ceiling)
     end
 
     # Objective is to maximize that people get assigned to days
     # when they are free
-    @setObjective(m, Max, lift)
+    @objective(m, Max, lift)
 
     status = solve(m)
     if status == :Optimal
@@ -597,7 +597,7 @@ function assign_employees_to_days(employees, env, consecutive=false, lift_ceilin
     else
         Logging.info( "Infeasible")
         gc()
-        return false, {}, 0
+        return false, Any[], 0
     end
     # ok
     gc()
